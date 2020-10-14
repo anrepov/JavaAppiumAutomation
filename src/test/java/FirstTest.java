@@ -54,6 +54,23 @@ public class FirstTest {
         waitForElementNotPresent(By.id("org.wikipedia:id/search_close_btn"), "X button still present", 5);
     }
 
+    @Test
+    public void assertResultsByTextHasThisText() {
+        String textForSearch = "Java";
+        searchText(textForSearch);
+
+        List<WebElement> searchResults = getVisibleSearchResults();
+        for (int i = 0; i < searchResults.size(); i++) {
+            WebElement result = driver.findElement(By.xpath(
+                    "//*[@resource-id = 'org.wikipedia:id/search_results_list']" +
+                            "/*[@class='android.view.ViewGroup'][@index = '" + i + "']" +
+                            "/*[@resource-id = 'org.wikipedia:id/page_list_item_title']"
+            ));
+            Assert.assertTrue(String.format("Текст в заголовке %s результата, равный %s, не совпадает с ожидаемым %s", i+1, result.getText(), textForSearch),
+                    result.getText().contains(textForSearch));
+        }
+    }
+
     private void assertElementHasText(By by, String expectedMessage, String errorMessage) {
         WebElement element = driver.findElement(by);
         Assert.assertEquals(errorMessage, expectedMessage, element.getText());
@@ -67,8 +84,7 @@ public class FirstTest {
     private List<WebElement> getVisibleSearchResults() {
         By by = By.xpath("//*[@resource-id = 'org.wikipedia:id/search_results_list']/*[@class='android.view.ViewGroup']");
         waitForElementPresent(by, "cant find search results");
-        List<WebElement> elements = driver.findElements(by);
-        return elements;
+        return driver.findElements(by);
     }
 
     private WebElement waitForElementPresent(By by, String errorMessage, long timeOutInSeconds) {
