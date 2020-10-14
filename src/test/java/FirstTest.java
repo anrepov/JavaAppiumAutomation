@@ -1,8 +1,11 @@
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.URL;
@@ -24,6 +27,9 @@ public class FirstTest {
         capabilities.setCapability("app", "C:\\Users\\anrep\\IdeaProjects\\JavaAppiumAutomation\\apks\\org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+
+        //Skip selecting language at start
+        driver.navigate().back();
     }
 
     @After
@@ -32,7 +38,12 @@ public class FirstTest {
     }
 
     @Test
-    public void firstTest() {
-        System.out.println("FKWEKFWE");
+    public void checkSearchFieldText() {
+        assertElementHasText(By.className("android.widget.TextView"), "Search Wikipedia", "Строка поиска не содержит ожидаемый текст");
+    }
+
+    private void assertElementHasText(By by, String expectedMessage, String errorMessage) {
+        WebElement element = driver.findElement(by);
+        Assert.assertEquals(errorMessage, expectedMessage, element.getText());
     }
 }
