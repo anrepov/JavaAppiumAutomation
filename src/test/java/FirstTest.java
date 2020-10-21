@@ -17,6 +17,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.assertEquals;
@@ -108,6 +109,15 @@ public class FirstTest {
         assertEquals("fwef", articlesBeforeDelete.get(0), deletedArticleName);
     }
 
+    @Test
+    public void assertArticleHasTitle() {
+        String articleTitle = "Java (programming language)";
+        searchText("Java");
+        selectResultWithText(articleTitle);
+
+        assertElementPresent(By.xpath("//android.view.View[@content-desc='" + articleTitle + "']"));
+    }
+
     private void assertElementHasText(By by, String expectedMessage, String errorMessage) {
         WebElement element = driver.findElement(by);
         Assert.assertEquals(errorMessage, expectedMessage, element.getText());
@@ -189,6 +199,14 @@ public class FirstTest {
             return true;
         } catch (ElementNotFoundException | TimeoutException ex) {
             return false;
+        }
+    }
+
+    private void assertElementPresent(By by) {
+        try {
+            driver.findElement(by).isDisplayed();
+        } catch (Exception ex) {
+            Assert.fail("element is not displayed");
         }
     }
 
