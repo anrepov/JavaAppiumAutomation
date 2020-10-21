@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -275,5 +276,44 @@ public class FirstTest {
             Thread.sleep(sec * 1000);
         } catch (Exception ex) {
         }
+    }
+
+
+    protected void swipeUpToFindElement(By by, String errorMessage, int maxSwipes) {
+
+        int alreadySwiped = 0;
+
+        while (driver.findElements(by).size() == 0) {
+
+            if (alreadySwiped > maxSwipes) {
+                waitForElementPresent(by, "cant find element by swiping up. \n" + errorMessage, 0);
+                return;
+            }
+            swipeUpQuick();
+            alreadySwiped++;
+        }
+    }
+
+
+    protected void swipeUp(int timeOfSwipe) {
+        TouchAction action = new TouchAction(driver);
+        Dimension size = driver.manage().window().getSize();
+        int x = size.width / 2;
+        int startY = (int) (size.height * 0.8);
+        int endY = (int) (size.height * 0.2);
+
+        action.press(x, startY).waitAction(timeOfSwipe).moveTo(x, endY).release().perform();
+    }
+
+    protected void swipeUpQuick() {
+        swipeUp(200);
+    }
+
+    private void selectFirstResult() {
+        waitForElementAndClick(By.xpath(
+                "//*[@resource-id = 'org.wikipedia:id/search_results_list']" +
+                        "/*[@class='android.view.ViewGroup'][@index = '0']" +
+                        "/*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
+                "cant find search field", 5);
     }
 }
