@@ -6,7 +6,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -14,7 +17,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.assertEquals;
@@ -35,6 +37,7 @@ public class FirstTest {
         capabilities.setCapability("appPackage", "org.wikipedia");
         capabilities.setCapability("appActivity", ".main.MainActivity");
         capabilities.setCapability("app", "C:\\Users\\anrep\\IdeaProjects\\JavaAppiumAutomation\\apks\\org.wikipedia.apk");
+        capabilities.setCapability("orientation", "PORTRAIT");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
 
@@ -44,7 +47,6 @@ public class FirstTest {
 
     @After
     public void tearDown() {
-        driver.rotate(ScreenOrientation.PORTRAIT);
         driver.quit();
     }
 
