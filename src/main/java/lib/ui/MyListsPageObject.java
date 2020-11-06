@@ -1,7 +1,6 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
@@ -12,12 +11,11 @@ import static junit.framework.TestCase.assertEquals;
 
 public class MyListsPageObject extends MainPageObject {
 
-    private static final By
-            CURRENT_ARTICLES_NAMES = By.xpath("//*[@resource-id = 'org.wikipedia:id/page_list_item_title']"),
-            STATUS_TEXT = By.xpath("//*[@resource-id = 'org.wikipedia:id/snackbar_text']");
     private static final String
-            SAVED_LIST_NAME_XPATH_TPL = "//*[@resource-id = 'org.wikipedia:id/item_title'][@text = '%s']",
-            SAVED_LIST_ELEMENT_XPATH_TPL = "//*[@resource-id = 'org.wikipedia:id/page_list_item_title'][@text = '%s']";
+            CURRENT_ARTICLES_NAMES = "xpath://*[@resource-id = 'org.wikipedia:id/page_list_item_title']",
+            STATUS_TEXT = "xpath://*[@resource-id = 'org.wikipedia:id/snackbar_text']",
+            SAVED_LIST_NAME_XPATH_TPL = "xpath://*[@resource-id = 'org.wikipedia:id/item_title'][@text = '%s']",
+            SAVED_LIST_ELEMENT_XPATH_TPL = "xpath://*[@resource-id = 'org.wikipedia:id/page_list_item_title'][@text = '%s']";
 
     public MyListsPageObject(AppiumDriver driver) {
         super(driver);
@@ -28,7 +26,7 @@ public class MyListsPageObject extends MainPageObject {
 
         navigationPageObject.goToMyListsFromMainPage();
         waitTimeOut(1);
-        waitForElementAndClick(By.xpath(String.format(SAVED_LIST_NAME_XPATH_TPL, listName)), "cant find list with name " + listName, 5);
+        waitForElementAndClick(String.format(SAVED_LIST_NAME_XPATH_TPL, listName), "cant find list with name " + listName, 5);
     }
 
     public int deleteAnyArticle() {
@@ -36,7 +34,7 @@ public class MyListsPageObject extends MainPageObject {
 
         int randomNum = ThreadLocalRandom.current().nextInt(1, articles.size() + 1);
         String articleNameToDelete = articles.get(randomNum - 1).getAttribute("text");
-        swipeElementToLeft(By.xpath(String.format(SAVED_LIST_ELEMENT_XPATH_TPL, articleNameToDelete)), "Cant swipe article");
+        swipeElementToLeft(String.format(SAVED_LIST_ELEMENT_XPATH_TPL, articleNameToDelete), "Cant swipe article");
 
         assertEquals("Status message after saving article to list is not equals expected",
                 articleNameToDelete + " removed from list", getStatusText());
@@ -54,7 +52,7 @@ public class MyListsPageObject extends MainPageObject {
 
     private List<WebElement> getCurrentArticlesNamesElements() {
         waitTimeOut(1);
-        return (List<WebElement>) driver.findElements(CURRENT_ARTICLES_NAMES);
+        return (List<WebElement>) driver.findElements(getLocatorByString(CURRENT_ARTICLES_NAMES));
     }
 
     private String getStatusText() {
