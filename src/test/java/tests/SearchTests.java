@@ -1,7 +1,9 @@
 package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -11,13 +13,13 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testCheckSearchFieldText() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.assertSearchLineHasSuggest();
     }
 
     @Test
     public void testAssertResultsByTextNotEmptyThenClear() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.searchText("Java");
         assertTrue("Search results is empty", searchPageObject.getVisibleSearchResults().size() > 1);
         searchPageObject.cancelSearch();
@@ -25,7 +27,7 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testAssertResultsByTextHasThisText() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         String textForSearch = "Java";
         searchPageObject.searchText(textForSearch);
         searchPageObject.assertSearchResultsHasText(textForSearch);

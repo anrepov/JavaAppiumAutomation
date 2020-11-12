@@ -4,17 +4,18 @@ import io.appium.java_client.AppiumDriver;
 
 import static junit.framework.TestCase.assertEquals;
 
-public class ArticlePageObject extends MainPageObject {
+abstract public class ArticlePageObject extends MainPageObject {
 
-    private static final String
-            SAVE_BUTTON = "xpath://*[@resource-id = 'org.wikipedia:id/page_actions_tab_layout']/*[@text = 'Save']",
-            ADD_TO_LIST_BUTTON = "xpath://*[@resource-id = 'org.wikipedia:id/snackbar_action'][@text = 'ADD TO LIST']",
-            GOT_IT_BUTTON = "xpath://*[@resource-id = 'org.wikipedia:id/onboarding_button'][@text = 'GOT IT']",
-            NEW_LIST_NAME_INPUT = "xpath://*[@resource-id = 'org.wikipedia:id/text_input'][@text = 'Name of this list']",
-            OK_BUTTON = "xpath://android.widget.Button[@text = 'OK']",
-            STATUS_TEXT = "xpath://*[@resource-id = 'org.wikipedia:id/snackbar_text']",
-            NEEDED_LIST_NAME_XPATH_TPL = "xpath://*[@resource-id = 'org.wikipedia:id/item_title'][@text = '%s']",
-            ARTICLE_TITLE_WITH_NAME_TPL = "xpath://android.view.View[@content-desc='%s']";
+    protected static String
+            SAVE_BUTTON,
+            CLOSE_SYNC_MESSAGE,
+            ADD_TO_LIST_BUTTON,
+            GOT_IT_BUTTON,
+            NEW_LIST_NAME_INPUT,
+            OK_BUTTON,
+            STATUS_TEXT,
+            NEEDED_LIST_NAME_XPATH_TPL,
+            ARTICLE_TITLE_WITH_NAME_TPL;
 
     public ArticlePageObject(AppiumDriver driver) {
         super(driver);
@@ -39,6 +40,13 @@ public class ArticlePageObject extends MainPageObject {
 
         assertEquals("Status message after saving article to list is not equals expected",
                 "Moved " + articleName + " to " + listName + ".", getStatusText());
+    }
+
+    public void addArticlesToMySaved() {
+        this.waitForElementAndClick(SAVE_BUTTON, "Cannot find save article button", 5);
+        if (isElementPresent(CLOSE_SYNC_MESSAGE, 2)) {
+            this.waitForElementAndClick(CLOSE_SYNC_MESSAGE, "Cannot find button to close 'Sync your saved articles?' window", 5);
+        }
     }
 
     private String getStatusText() {

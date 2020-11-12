@@ -61,6 +61,7 @@ public class MainPageObject {
 
     public WebElement waitForElementAndSendKeys(String locator, String value, String errorMessage, long timeoutInSeconds) {
         WebElement element = waitForElementPresent(locator, errorMessage, timeoutInSeconds);
+        element.clear();
         element.sendKeys(value);
         return element;
     }
@@ -82,7 +83,9 @@ public class MainPageObject {
         int middleY = (upperY + lowerY) / 2;
 
         TouchAction action = new TouchAction(driver);
-        action.press(PointOption.point(rightX, middleY)).waitAction(WaitOptions.waitOptions(Duration.ofMillis(300))).moveTo(PointOption.point(leftX, middleY)).release().perform();
+        action.press(PointOption.point(rightX, middleY)).waitAction(WaitOptions.waitOptions(Duration.ofMillis(300)))
+                .moveTo(PointOption.point(leftX, middleY))
+                .release().perform();
     }
 
     String waitForElementAndGetAttribute(String locator, String attribute, String errorMessage, long timeoutInSeconds) {
@@ -139,13 +142,6 @@ public class MainPageObject {
         swipeUp(200);
     }
 
-    private void selectFirstResult() {
-        waitForElementAndClick("xpath://*[@resource-id = 'org.wikipedia:id/search_results_list']" +
-                        "/*[@class='android.view.ViewGroup'][@index = '0']" +
-                        "/*[@resource-id = 'org.wikipedia:id/page_list_item_title']",
-                "cant find search field", 5);
-    }
-
     public By getLocatorByString(String locator_with_type) {
         String[] exploded_locator = locator_with_type.split(Pattern.quote(":"), 2);
         String by_type = exploded_locator[0];
@@ -158,5 +154,20 @@ public class MainPageObject {
         else if (by_type.equals("className"))
             return By.className(locator);
         else throw new IllegalArgumentException("Cannot get type of locator. Locator " + locator_with_type);
+    }
+
+    public void clickElementToTheRightUpperCorner(String locator, String errorMessage) {
+        WebElement element = this.waitForElementPresent(locator + "/..", errorMessage);
+        int rightX = element.getLocation().getX();
+        int upperY = element.getLocation().getY();
+        int lowerY = upperY + element.getSize().getHeight();
+        int middleY = (upperY + lowerY) / 2;
+        int width = element.getSize().getWidth();
+
+        int pointToClickX = (rightX + width) - 3;
+        int pointToClickY = middleY;
+
+        TouchAction action = new TouchAction(driver);
+        action.tap(PointOption.point(pointToClickX, pointToClickY)).perform();
     }
 }
