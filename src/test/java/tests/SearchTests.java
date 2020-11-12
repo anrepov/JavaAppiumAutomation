@@ -35,14 +35,22 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testFindSearchResultWithTitleAndDescription() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 
         searchPageObject.searchText("Java");
-
         Map<String, String> expectedSearchResults = new HashMap<>();
-        expectedSearchResults.put("Java", "Indonesian island");
-        expectedSearchResults.put("JavaScript", "High-level programming language");
-        expectedSearchResults.put("Java (programming language)", "Object-oriented programaming language");
+
+        if (Platform.getInstance().isAndroid()) {
+            expectedSearchResults = new HashMap<>();
+            expectedSearchResults.put("Java", "Indonesian island");
+            expectedSearchResults.put("JavaScript", "High-level programming language");
+            expectedSearchResults.put("Java (programming language)", "Object-oriented programming language");
+        } else if (Platform.getInstance().isIOS()) {
+            expectedSearchResults = new HashMap<>();
+            expectedSearchResults.put("Java", "Island of Indonesia");
+            expectedSearchResults.put("JavaScript", "Programming language");
+            expectedSearchResults.put("Java (programming language)", "Object-oriented programming language");
+        }
 
         expectedSearchResults.forEach(searchPageObject::waitForElementByTitleAndDescription);
     }
