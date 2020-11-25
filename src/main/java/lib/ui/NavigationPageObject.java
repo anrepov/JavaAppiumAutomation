@@ -1,6 +1,6 @@
 package lib.ui;
 
-import io.appium.java_client.AppiumDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 abstract public class NavigationPageObject extends MainPageObject {
 
@@ -8,9 +8,10 @@ abstract public class NavigationPageObject extends MainPageObject {
             MORE_OPTIONS_BUTTON,
             EXPLORE_BUTTON,
             MY_LISTS_BUTTON,
+            MAIN_MENU,
             BACK_BUTTON;
 
-    public NavigationPageObject(AppiumDriver driver) {
+    public NavigationPageObject(RemoteWebDriver driver) {
         super(driver);
     }
 
@@ -22,5 +23,10 @@ abstract public class NavigationPageObject extends MainPageObject {
 
     public void goToMyListsFromMainPage() {
         waitForElementAndClick(MY_LISTS_BUTTON, "cant find 'My lists' button", 5);
+    }
+
+    public void openMainMenu() {
+        waitTimeOut(1);
+        waitForElementAndClick(MAIN_MENU, "cant find and click main menu button", 5);
     }
 }

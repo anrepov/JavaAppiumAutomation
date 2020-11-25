@@ -1,6 +1,7 @@
 package lib.ui;
 
-import io.appium.java_client.AppiumDriver;
+import lib.Platform;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -10,6 +11,7 @@ abstract public class ArticlePageObject extends MainPageObject {
             SAVE_BUTTON,
             CLOSE_SYNC_MESSAGE,
             ADD_TO_LIST_BUTTON,
+            DELETE_FROM_MY_LISTS,
             GOT_IT_BUTTON,
             NEW_LIST_NAME_INPUT,
             OK_BUTTON,
@@ -17,7 +19,7 @@ abstract public class ArticlePageObject extends MainPageObject {
             NEEDED_LIST_NAME_XPATH_TPL,
             ARTICLE_TITLE_WITH_NAME_TPL;
 
-    public ArticlePageObject(AppiumDriver driver) {
+    public ArticlePageObject(RemoteWebDriver driver) {
         super(driver);
     }
 
@@ -43,9 +45,21 @@ abstract public class ArticlePageObject extends MainPageObject {
     }
 
     public void addArticlesToMySaved() {
+        if (Platform.getInstance().isMw()) {
+            removeArticleFromSavedIfAdded();
+        }
         this.waitForElementAndClick(SAVE_BUTTON, "Cannot find save article button", 5);
-        if (isElementPresent(CLOSE_SYNC_MESSAGE, 2)) {
-            this.waitForElementAndClick(CLOSE_SYNC_MESSAGE, "Cannot find button to close 'Sync your saved articles?' window", 5);
+
+        if (Platform.getInstance().isIOS()) {
+            if (isElementPresent(CLOSE_SYNC_MESSAGE, 2))
+                this.waitForElementAndClick(CLOSE_SYNC_MESSAGE, "Cannot find button to close 'Sync your saved articles?' window", 5);
+        }
+    }
+
+    public void removeArticleFromSavedIfAdded() {
+        if (isElementPresent(DELETE_FROM_MY_LISTS, 2)) {
+            waitForElementAndClick(DELETE_FROM_MY_LISTS, "cant delete article", 5);
+            waitForElementPresent(SAVE_BUTTON, "cant find button to add article to list", 5);
         }
     }
 

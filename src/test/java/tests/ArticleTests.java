@@ -10,7 +10,7 @@ import org.junit.Test;
 public class ArticleTests extends CoreTestCase {
 
     @Test
-    public void testAssertArticleHasTitle() {
+    public void testAssertArticleHasTitle() throws InterruptedException {
         ArticlePageObject articlePageObject = ArticlePageObjectFactory.get(driver);
         SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 

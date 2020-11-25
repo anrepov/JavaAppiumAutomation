@@ -5,10 +5,12 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import lib.Platform;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -20,9 +22,9 @@ import static junit.framework.TestCase.fail;
 
 public class MainPageObject {
 
-    protected AppiumDriver driver;
+    protected RemoteWebDriver driver;
 
-    public MainPageObject(AppiumDriver driver) {
+    public MainPageObject(RemoteWebDriver driver) {
         this.driver = driver;
     }
 
@@ -45,7 +47,7 @@ public class MainPageObject {
         wait.withMessage(errorMessage + "\n");
 
         return wait.until(
-                ExpectedConditions.presenceOfElementLocated(by)
+                ExpectedConditions.visibilityOfElementLocated(by)
         );
     }
 
@@ -74,18 +76,22 @@ public class MainPageObject {
     }
 
     protected void swipeElementToLeft(String locator, String errorMessage) {
-        WebElement element = waitForElementPresent(locator, errorMessage, 10);
+        if (driver instanceof AppiumDriver) {
+            WebElement element = waitForElementPresent(locator, errorMessage, 10);
 
-        int leftX = element.getLocation().getX();
-        int rightX = leftX + element.getSize().getWidth();
-        int upperY = element.getLocation().getY();
-        int lowerY = upperY + element.getSize().getHeight();
-        int middleY = (upperY + lowerY) / 2;
+            int leftX = element.getLocation().getX();
+            int rightX = leftX + element.getSize().getWidth();
+            int upperY = element.getLocation().getY();
+            int lowerY = upperY + element.getSize().getHeight();
+            int middleY = (upperY + lowerY) / 2;
 
-        TouchAction action = new TouchAction(driver);
-        action.press(PointOption.point(rightX, middleY)).waitAction(WaitOptions.waitOptions(Duration.ofMillis(300)))
-                .moveTo(PointOption.point(leftX, middleY))
-                .release().perform();
+            TouchAction action = new TouchAction((AppiumDriver) driver);
+            action.press(PointOption.point(rightX, middleY)).waitAction(WaitOptions.waitOptions(Duration.ofMillis(300)))
+                    .moveTo(PointOption.point(leftX, middleY))
+                    .release().perform();
+        } else {
+            System.out.println("Method swipeElementToLeft() do nothing for platform " + Platform.getInstance().getPlatformVar());
+        }
     }
 
     String waitForElementAndGetAttribute(String locator, String attribute, String errorMessage, long timeoutInSeconds) {
@@ -129,13 +135,17 @@ public class MainPageObject {
     }
 
     protected void swipeUp(int timeOfSwipe) {
-        TouchAction action = new TouchAction(driver);
-        Dimension size = driver.manage().window().getSize();
-        int x = size.width / 2;
-        int startY = (int) (size.height * 0.8);
-        int endY = (int) (size.height * 0.2);
+        if (driver instanceof AppiumDriver) {
+            TouchAction action = new TouchAction((AppiumDriver) driver);
+            Dimension size = driver.manage().window().getSize();
+            int x = size.width / 2;
+            int startY = (int) (size.height * 0.8);
+            int endY = (int) (size.height * 0.2);
 
-        action.press(PointOption.point(x, startY)).waitAction(WaitOptions.waitOptions(Duration.ofMillis(timeOfSwipe))).moveTo(PointOption.point(x, endY)).release().perform();
+            action.press(PointOption.point(x, startY)).waitAction(WaitOptions.waitOptions(Duration.ofMillis(timeOfSwipe))).moveTo(PointOption.point(x, endY)).release().perform();
+        } else {
+            System.out.println("Method swipeUp() do nothing for platform " + Platform.getInstance().getPlatformVar());
+        }
     }
 
     protected void swipeUpQuick() {
@@ -153,21 +163,27 @@ public class MainPageObject {
             return By.id(locator);
         else if (by_type.equals("className"))
             return By.className(locator);
+        else if (by_type.equals("css"))
+            return By.cssSelector(locator);
         else throw new IllegalArgumentException("Cannot get type of locator. Locator " + locator_with_type);
     }
 
     public void clickElementToTheRightUpperCorner(String locator, String errorMessage) {
-        WebElement element = this.waitForElementPresent(locator + "/..", errorMessage);
-        int rightX = element.getLocation().getX();
-        int upperY = element.getLocation().getY();
-        int lowerY = upperY + element.getSize().getHeight();
-        int middleY = (upperY + lowerY) / 2;
-        int width = element.getSize().getWidth();
+        if (driver instanceof AppiumDriver) {
+            WebElement element = this.waitForElementPresent(locator + "/..", errorMessage);
+            int rightX = element.getLocation().getX();
+            int upperY = element.getLocation().getY();
+            int lowerY = upperY + element.getSize().getHeight();
+            int middleY = (upperY + lowerY) / 2;
+            int width = element.getSize().getWidth();
 
-        int pointToClickX = (rightX + width) - 3;
-        int pointToClickY = middleY;
+            int pointToClickX = (rightX + width) - 3;
+            int pointToClickY = middleY;
 
-        TouchAction action = new TouchAction(driver);
-        action.tap(PointOption.point(pointToClickX, pointToClickY)).perform();
+            TouchAction action = new TouchAction((AppiumDriver) driver);
+            action.tap(PointOption.point(pointToClickX, pointToClickY)).perform();
+        } else {
+            System.out.println("Method clickElementToTheRightUpperCorner() do nothing for platform " + Platform.getInstance().getPlatformVar());
+        }
     }
 }

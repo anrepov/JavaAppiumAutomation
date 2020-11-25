@@ -1,7 +1,7 @@
 package lib.ui.ios;
 
-import io.appium.java_client.AppiumDriver;
 import lib.ui.NavigationPageObject;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class iOSNavigationPageObject extends NavigationPageObject {
 
@@ -11,7 +11,7 @@ public class iOSNavigationPageObject extends NavigationPageObject {
         BACK_BUTTON = "id:Back";
     }
 
-    public iOSNavigationPageObject(AppiumDriver driver) {
+    public iOSNavigationPageObject(RemoteWebDriver driver) {
         super(driver);
     }
 

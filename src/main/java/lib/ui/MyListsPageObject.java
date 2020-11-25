@@ -1,9 +1,9 @@
 package lib.ui;
 
-import io.appium.java_client.AppiumDriver;
 import lib.Platform;
 import lib.ui.factories.NavigationPageObjectFactory;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public abstract class MyListsPageObject extends MainPageObject {
             SAVED_LIST_NAME_XPATH_TPL,
             SAVED_LIST_ELEMENT_XPATH_TPL;
 
-    public MyListsPageObject(AppiumDriver driver) {
+    public MyListsPageObject(RemoteWebDriver driver) {
         super(driver);
     }
 
@@ -36,18 +36,21 @@ public abstract class MyListsPageObject extends MainPageObject {
         List<WebElement> articles = getCurrentArticlesNamesElements();
 
         int randomNum = ThreadLocalRandom.current().nextInt(1, articles.size() + 1);
-        String attributeName;
-        if (Platform.getInstance().isAndroid()) attributeName = "text";
-        else attributeName = "name";
 
-        String articleNameToDelete = articles.get(randomNum - 1).getAttribute(attributeName);
+        String articleNameToDelete = getArticleNameByPlatform(articles.get(randomNum - 1));
+        System.out.println("article to delete " + articleNameToDelete);
 
         if (Platform.getInstance().isIOS()) {
             String[] articleNameToDeleteMass = articleNameToDelete.split(Pattern.quote("\n"));
             articleNameToDelete = articleNameToDeleteMass[articleNameToDeleteMass.length - 1];
         }
-
-        swipeElementToLeft(String.format(SAVED_LIST_ELEMENT_XPATH_TPL, articleNameToDelete), "Cant swipe article");
+        if (Platform.getInstance().isMw()) {
+            System.out.println("el " + String.format(SAVED_LIST_ELEMENT_XPATH_TPL, articleNameToDelete));
+            waitForElementAndClick(String.format(SAVED_LIST_ELEMENT_XPATH_TPL, articleNameToDelete),
+                    "cant click unwatch at article " + articleNameToDelete, 5);
+        } else {
+            swipeElementToLeft(String.format(SAVED_LIST_ELEMENT_XPATH_TPL, articleNameToDelete), "Cant swipe article");
+        }
 
         if (Platform.getInstance().isIOS())
             this.clickElementToTheRightUpperCorner(String.format(SAVED_LIST_ELEMENT_XPATH_TPL, articleNameToDelete), "cant find saved article");
@@ -55,25 +58,32 @@ public abstract class MyListsPageObject extends MainPageObject {
         if (Platform.getInstance().isAndroid())
             assertEquals("Status message after saving article to list is not equals expected",
                     articleNameToDelete + " removed from list", getStatusText());
+
+        if (Platform.getInstance().isMw())
+            driver.navigate().refresh();
+
         return randomNum;
     }
 
     public List<String> getCurrentArticlesNames() {
         List<WebElement> currentArticlesElements = getCurrentArticlesNamesElements();
         List<String> currentArticles = new ArrayList<>();
-        String attributeName;
-        if (Platform.getInstance().isAndroid()) attributeName = "text";
-        else attributeName = "name";
 
         for (WebElement webElement : currentArticlesElements) {
-            currentArticles.add(webElement.getAttribute(attributeName));
+            currentArticles.add(getArticleNameByPlatform(webElement));
         }
         return currentArticles;
     }
 
     private List<WebElement> getCurrentArticlesNamesElements() {
         waitTimeOut(1);
-        return (List<WebElement>) driver.findElements(getLocatorByString(CURRENT_ARTICLES_NAMES));
+        return driver.findElements(getLocatorByString(CURRENT_ARTICLES_NAMES));
+    }
+
+    private String getArticleNameByPlatform(WebElement webElement) {
+        if (Platform.getInstance().isIOS()) return webElement.getAttribute("name");
+        else if (Platform.getInstance().isAndroid()) return webElement.getAttribute("text");
+        else return webElement.getText();
     }
 
     private String getStatusText() {

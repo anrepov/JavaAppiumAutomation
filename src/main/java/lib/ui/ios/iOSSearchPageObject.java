@@ -1,8 +1,8 @@
 package lib.ui.ios;
 
-import io.appium.java_client.AppiumDriver;
 import lib.ui.SearchPageObject;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class iOSSearchPageObject extends SearchPageObject {
         SEARCH_RESULT_BY_TEXT_AND_DESCRIPTION_TPL = "xpath://*[contains(@name, '%s')][contains(@name, '%s')]";
     }
 
-    public iOSSearchPageObject(AppiumDriver driver) {
+    public iOSSearchPageObject(RemoteWebDriver driver) {
         super(driver);
     }
 
@@ -35,5 +35,4 @@ public class iOSSearchPageObject extends SearchPageObject {
                     result.getText().contains(text));
         }
     }
-
 }
