@@ -2,10 +2,7 @@ package tests;
 
 import lib.CoreTestCase;
 import lib.Platform;
-import lib.ui.ArticlePageObject;
-import lib.ui.MyListsPageObject;
-import lib.ui.NavigationPageObject;
-import lib.ui.SearchPageObject;
+import lib.ui.*;
 import lib.ui.factories.ArticlePageObjectFactory;
 import lib.ui.factories.MyListsPageObjectFactory;
 import lib.ui.factories.NavigationPageObjectFactory;
@@ -27,21 +24,28 @@ public class MyListsTests extends CoreTestCase {
         String listName = "testList";
         searchPageObject.searchText("Java");
 
-        if (Platform.getInstance().isAndroid()) articleTitle = "Java (programming language)";
-        else articleTitle = "programming language";
+        if (Platform.getInstance().isIOS()) articleTitle = "programming language";
+        else articleTitle = "Java (programming language)";
         searchPageObject.selectResultWithText(articleTitle);
 
         if (Platform.getInstance().isAndroid()) {
             articlePageObject.addToList(articleTitle, listName);
             driver.navigate().back();
-        } else {
+        } else if (Platform.getInstance().isIOS()) {
             articlePageObject.addArticlesToMySaved();
             navigationPageObject.goToMainPage();
             searchPageObject.searchText("Java");
+        } else {
+            navigationPageObject.openMainMenu();
+            AuthorizationPageObject authorizationPageObject = new AuthorizationPageObject(driver);
+            authorizationPageObject.login("Anrepov", "rzngmi76");
+
+            articlePageObject.addArticlesToMySaved();
+            searchPageObject.searchText("Java");
         }
 
-        if (Platform.getInstance().isAndroid()) articleTitle = "Java";
-        else articleTitle = "Island of Indonesia";
+        if (Platform.getInstance().isIOS()) articleTitle = "Island of Indonesia";
+        else articleTitle = "Java";
         searchPageObject.selectResultWithText(articleTitle);
 
         if (Platform.getInstance().isAndroid()) {
@@ -51,7 +55,10 @@ public class MyListsTests extends CoreTestCase {
             articlePageObject.addArticlesToMySaved();
         }
 
-        navigationPageObject.goToMainPage();
+        if (Platform.getInstance().isMw()) {
+            navigationPageObject.openMainMenu();
+        } else
+            navigationPageObject.goToMainPage();
 
         if (Platform.getInstance().isAndroid())
             myListsPageObject.openSavedList(listName);
