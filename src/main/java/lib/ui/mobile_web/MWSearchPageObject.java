@@ -12,7 +12,7 @@ public class MWSearchPageObject extends SearchPageObject {
         SEARCH_CANCEL_BUTTON = "xpath://div[@class = 'header-action']/button[contains(@class, 'cancel')]";
         SEARCH_RESULT_BY_INDEX_TPL = "xpath://ul[contains(@class, 'page-list')]/li[%s]";
         SEARCH_RESULT_BY_TEXT_TPL = "xpath://li[contains(@title, '%s')]";
-        SEARCH_RESULT_BY_TEXT_AND_DESCRIPTION_TPL = "//li[contains(@title, '%s')]//div[text() = '%s']";
+        SEARCH_RESULT_BY_TEXT_AND_DESCRIPTION_TPL = "xpath://li[contains(@title, '%s')]//div[text() = '%s']";
     }
 
     public MWSearchPageObject(RemoteWebDriver driver) {
